@@ -1,0 +1,7 @@
+parameter_set_id: BASEL_FRTB_SA_2026_08_25
+risk_weights:
+  EXOTIC_UNDERLYING: 0.01
+  OTHER_RESIDUAL_RISK: 0.001
+calculation_basis: gross_notional_without_netting
+additional_to_sbm_and_drc: true
+source: MAR23.1-MAR23.8

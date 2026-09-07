@@ -1,0 +1,36 @@
+parameter_set_id: BASEL_FRTB_SA_2026_08_25
+capital_horizon_years: 1.0
+non_securitisation:
+  lgd:
+    equity_and_non_senior_debt: 1.00
+    senior_debt: 0.75
+    covered_bond: 0.25
+  risk_weights:
+    AAA: 0.005
+    AA: 0.02
+    A: 0.03
+    BBB: 0.06
+    BB: 0.15
+    B: 0.30
+    CCC: 0.50
+    UNRATED: 0.15
+    DEFAULTED: 1.00
+  buckets:
+    - CORPORATE
+    - SOVEREIGN
+    - LOCAL_GOVERNMENT
+  source: MAR22.11-MAR22.25
+securitisation_non_ctp:
+  jtd_basis: market_value_without_separate_lgd
+  risk_weight_basis: banking_book_securitisation_treatment_with_one_year_maturity
+  sec_sa_supervisory_parameter_p: 1.0
+  sec_sa_rwa_floor: 0.15
+  below_ka_capital_weight: 1.0
+  no_cross_bucket_hedging: true
+  source: MAR22.26-MAR22.35 and CRE40-CRE44
+securitisation_ctp:
+  non_tranched_uses_non_sec_weights: true
+  ctp_wide_hbr: true
+  bucket_amount_may_be_negative: true
+  cross_index_hedge_discount: 0.50
+  source: MAR22.36-MAR22.45

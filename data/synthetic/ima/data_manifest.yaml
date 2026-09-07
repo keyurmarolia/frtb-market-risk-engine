@@ -1,0 +1,12 @@
+data_classification: synthetic
+construction: correlated economic factors, volatility clustering, named stress regimes
+  and fixed random seeds
+not_real_price_warning: RFET observations are synthetic transaction and committed-quote
+  events, not public closing prices
+valuation_anchor: data/synthetic/market_data.yaml
+files:
+  risk_factor_inventory.csv: factor definitions, liquidity horizons and data labels
+  risk_factor_history.csv.gz: ten-year joint factor history
+  rfet_observations.csv: synthetic qualifying-observation evidence
+  daily_portfolio_snapshots.csv.gz: 501 dated position snapshots supporting 500 next-day
+    P&L outcomes

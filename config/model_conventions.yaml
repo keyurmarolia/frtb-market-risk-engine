@@ -1,0 +1,27 @@
+valuation:
+  reporting_currency: INR
+  jurisdiction_context: India
+  foreign_currency_treatment: retain_trade_currency_and_measure_fx_against_inr
+  date_format: YYYY-MM-DD
+  monetary_unit: INR
+
+data_controls:
+  synthetic_records_require_flag: true
+  regulatory_parameters_must_have_source_reference: true
+  overwrite_existing_run: false
+  preserve_trade_level_results: true
+
+calculation_segregation:
+  dimensions:
+    - trade
+    - instrument_type
+    - cash_or_derivative
+    - desk
+    - portfolio
+    - risk_class
+    - risk_measure
+    - regulatory_bucket
+  risk_measures:
+    - DELTA
+    - VEGA
+    - CURVATURE

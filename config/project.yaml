@@ -1,0 +1,53 @@
+project:
+  name: FRTB Market Risk Engine
+  phase: 2
+  phase_name: Integrated Standardised Approach and Internal Models Approach
+  jurisdiction_context: India
+  reporting_currency: INR
+  base_currency: INR
+  valuation_date: 2026-06-30
+  data_classification: synthetic
+
+portfolio:
+  portfolio_id: INDIA_SYNTHETIC_TRADING_BOOK
+  name: India-based Synthetic Trading Book
+  database_path: data/database/frtb_shared.sqlite3
+  shared_across_methods:
+    - SA
+    - IMA
+
+engines:
+  methods:
+    - SA
+    - IMA
+  regulatory_components:
+    - SBM
+    - DRC_NON_SECURITISATION
+    - DRC_SECURITISATION_NON_CTP
+    - DRC_SECURITISATION_CTP
+    - RRAO
+  sbm_risk_classes:
+    - GIRR
+    - CSR_NON_SECURITISATION
+    - CSR_SECURITISATION_NON_CTP
+    - CSR_SECURITISATION_CTP
+    - EQUITY
+    - COMMODITY
+    - FX
+  ima_components:
+    - RFET
+    - EXPECTED_SHORTFALL
+    - IMCC
+    - NMRF_SES
+    - IMA_DRC
+    - PLA
+    - BACKTESTING
+    - DESK_ELIGIBILITY
+  shares_portfolio_database: true
+  shares_pricing_and_risk_factors: true
+
+provenance:
+  regulatory_manifest: config/regulatory/basel_2026_08_25/source_manifest.yaml
+  regulatory_parameter_storage: config/regulatory/basel_2026_08_25
+  synthetic_input_storage: data/synthetic
+  ima_regulatory_parameters: config/regulatory/basel_2026_08_25/ima_parameters.yaml

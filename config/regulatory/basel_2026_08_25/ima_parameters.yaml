@@ -1,0 +1,99 @@
+parameter_set_id: BASEL_FRTB_IMA_2026_08_25
+framework: Basel Framework
+effective_date: 2023-01-01
+snapshot_date: 2026-08-25
+data_status: regulatory_parameters
+
+rfet:
+  assessment_frequency: quarterly
+  route_1_minimum_observations: 24
+  route_1_window_months: 12
+  route_1_minimum_observations_in_any_90_days: 4
+  route_2_minimum_observations: 100
+  maximum_observations_per_day: 1
+
+expected_shortfall:
+  confidence_level: 0.975
+  base_horizon_days: 10
+  liquidity_horizons_days: [10, 20, 40, 60, 120]
+  current_window_business_days: 250
+  stress_window_business_days: 250
+  reduced_set_minimum_coverage: 0.75
+  stress_scaling_ratio_floor: 1.0
+  imcc_unconstrained_weight: 0.5
+  imcc_constrained_weight: 0.5
+  broad_risk_classes: [INTEREST_RATE, CREDIT_SPREAD, EQUITY, FX, COMMODITY]
+
+liquidity_horizon_mapping:
+  INTEREST_RATE_SPECIFIED_CURRENCY: 10
+  INTEREST_RATE_VOLATILITY: 60
+  INTEREST_RATE_OTHER: 60
+  CREDIT_SPREAD_SOVEREIGN_IG: 20
+  CREDIT_SPREAD_SOVEREIGN_HY: 40
+  CREDIT_SPREAD_CORPORATE_IG: 40
+  CREDIT_SPREAD_CORPORATE_HY: 60
+  CREDIT_SPREAD_VOLATILITY: 120
+  CREDIT_SPREAD_OTHER: 120
+  EQUITY_LARGE_CAP_PRICE: 10
+  EQUITY_SMALL_CAP_PRICE: 20
+  EQUITY_LARGE_CAP_VOLATILITY: 20
+  EQUITY_SMALL_CAP_VOLATILITY: 60
+  EQUITY_OTHER: 60
+  FX_SPECIFIED_PAIR: 10
+  FX_OTHER_PAIR: 20
+  FX_VOLATILITY: 40
+  FX_OTHER: 40
+  COMMODITY_ENERGY_PRICE: 20
+  COMMODITY_METAL_PRICE: 20
+  COMMODITY_OTHER_PRICE: 60
+  COMMODITY_ENERGY_VOLATILITY: 60
+  COMMODITY_METAL_VOLATILITY: 60
+  COMMODITY_OTHER_VOLATILITY: 120
+  COMMODITY_OTHER: 120
+
+nmrf:
+  confidence_level: 0.975
+  minimum_stress_observations: 20
+  idiosyncratic_correlation: 0.0
+  other_correlation: 0.6
+
+ima_drc:
+  confidence_level: 0.999
+  horizon_years: 1
+  probability_of_default_floor: 0.0003
+  correlation_history_years: 10
+  calculation_frequency: weekly
+  averaging_weeks: 12
+  systematic_factor_types: [GLOBAL, SECTOR_REGION]
+
+pla:
+  observation_days: 250
+  green_minimum_spearman: 0.80
+  green_maximum_ks: 0.09
+  red_spearman_below: 0.70
+  red_ks_above: 0.12
+
+desk_backtesting:
+  observation_days: 250
+  confidence_levels: [0.975, 0.99]
+  maximum_99_percent_exceptions: 12
+  maximum_97_5_percent_exceptions: 30
+
+bank_wide_backtesting_multiplier:
+  0: 1.50
+  1: 1.50
+  2: 1.50
+  3: 1.50
+  4: 1.50
+  5: 1.70
+  6: 1.76
+  7: 1.83
+  8: 1.88
+  9: 1.92
+  10_or_more: 2.00
+
+capital:
+  imcc_ses_average_days: 60
+  drc_average_weeks: 12
+  market_rwa_multiplier: 12.5
+  minimum_ima_share: 0.10

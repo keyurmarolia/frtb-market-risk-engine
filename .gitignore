@@ -1,0 +1,14 @@
+.DS_Store
+.frtb_sa_env/
+.pytest_cache/
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+work/
+
+# Reproducible local runtime artifacts
+data/database/*.sqlite3
+outputs/*

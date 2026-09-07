@@ -1,0 +1,104 @@
+parameter_set:
+  parameter_set_id: BASEL_FRTB_SA_2026_08_25
+  framework: Basel Framework
+  framework_effective_date: 2023-01-01
+  snapshot_date: 2026-08-25
+  basis: Basel global minimum standard
+  jurisdiction_note: India is the reporting context; national implementation differences are outside the current parameter snapshot.
+  status: educational_parameter_set_loaded_and_validated
+  parameter_files:
+    - config/regulatory/basel_2026_08_25/sbm_parameters.yaml
+    - config/regulatory/basel_2026_08_25/drc_parameters.yaml
+    - config/regulatory/basel_2026_08_25/rrao_parameters.yaml
+    - config/regulatory/basel_2026_08_25/ima_parameters.yaml
+
+sources:
+  - source_id: BASEL_CONSOLIDATED_FRAMEWORK
+    title: The Basel Framework
+    url: https://www.bis.org/baselframework/BaselFramework.pdf
+    accessed_on: 2026-08-25
+    purpose: Consolidated authoritative framework and incorporated FAQs
+    relevant_sections:
+      - MAR20
+      - MAR21
+      - MAR22
+      - MAR23
+      - MAR30
+      - MAR31
+      - MAR32
+      - MAR33
+    notes: MAR21 in the consolidated snapshot states that it incorporates FAQs published on 5 July 2024 and 23 March 2026.
+
+  - source_id: BASEL_MAR20
+    title: Standardised approach - general provisions and structure
+    url: https://www.bis.org/basel_framework/chapter/MAR/20.htm
+    accessed_on: 2026-08-25
+    purpose: SA structure and conversion of capital to RWA
+    paragraph_ranges:
+      - MAR20.1-MAR20.5
+
+  - source_id: BASEL_MAR21
+    title: Standardised approach - sensitivities-based method
+    url: https://www.bis.org/committees/bcbs/basel-framework/standard/mar/21/inforce/2023-01-01/published/2026-03-23
+    accessed_on: 2026-08-25
+    purpose: Seven risk classes, sensitivities, netting, weights, correlations and aggregation
+    paragraph_ranges:
+      - MAR21.1-MAR21.101
+
+  - source_id: BASEL_MAR22
+    title: Standardised approach - default risk capital requirement
+    url: https://www.bis.org/basel_framework/chapter/MAR/22.htm
+    accessed_on: 2026-08-25
+    purpose: DRC for non-securitisations, securitisations non-CTP and CTP
+    paragraph_ranges:
+      - MAR22.1-MAR22.45
+
+  - source_id: BASEL_MAR23
+    title: Standardised approach - residual risk add-on
+    url: https://www.bis.org/basel_framework/chapter/MAR/23.htm
+    accessed_on: 2026-08-25
+    purpose: RRAO scope, exclusions, gross notional treatment and weights
+    paragraph_ranges:
+      - MAR23.1-MAR23.8
+
+  - source_id: BASEL_MAR30
+    title: Internal models approach - general provisions
+    url: https://www.bis.org/basel_framework/chapter/MAR/30.htm
+    accessed_on: 2026-08-25
+    purpose: IMA approval, governance and trading-desk model requirements
+    paragraph_ranges:
+      - MAR30.1-MAR30.21
+
+  - source_id: BASEL_MAR31
+    title: Internal models approach - model requirements
+    url: https://www.bis.org/basel_framework/chapter/MAR/31.htm
+    accessed_on: 2026-08-25
+    purpose: Risk factors, real prices, RFET and modellability
+    paragraph_ranges:
+      - MAR31.1-MAR31.26
+
+  - source_id: BASEL_MAR32
+    title: Internal models approach - backtesting and P&L attribution
+    url: https://www.bis.org/basel_framework/chapter/MAR/32.htm
+    accessed_on: 2026-08-25
+    purpose: HPL, RTPL, APL, backtesting, PLA and desk eligibility
+    paragraph_ranges:
+      - MAR32.1-MAR32.45
+
+  - source_id: BASEL_MAR33
+    title: Internal models approach - capital requirements calculation
+    url: https://www.bis.org/basel_framework/chapter/MAR/33.htm
+    accessed_on: 2026-08-25
+    purpose: ES, liquidity horizons, IMCC, NMRF SES, IMA DRC and final aggregation
+    paragraph_ranges:
+      - MAR33.1-MAR33.46
+
+required_components:
+  - MAR20
+  - MAR21
+  - MAR22
+  - MAR23
+  - MAR30
+  - MAR31
+  - MAR32
+  - MAR33

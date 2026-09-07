@@ -1,0 +1,31 @@
+data_status: synthetic_model_assumptions_not_regulatory_parameters
+history:
+  start: 2016-07-01
+  end: 2026-06-30
+  seed: 20260825
+  observation_seed: 20260826
+  portfolio_seed: 20260827
+  reduced_materiality_target: 0.85
+default_model:
+  simulation_count: 250000
+  random_seed: 20260825
+  global_loading: 0.25
+  sector_region_loading: 0.20
+  rating_pd: {AAA: 0.0004, AA: 0.001, A: 0.0025, BBB: 0.0075, BB: 0.03, B: 0.08, CCC: 0.20, UNRATED: 0.015}
+contract_terms:
+  E02: {delivery_price: 2995}
+  E08: {delivery_price: 24800}
+  M01: {delivery_price: 83}
+  M02: {delivery_price: 85}
+  M03: {delivery_price: 79}
+  M04: {delivery_price: 2360}
+  M05: {delivery_price: 2400}
+  E10: {barrier: 30000}
+securitisation_pools:
+  RMBS_SPV: {pool_capital_ratio: 0.04, delinquent_share: 0.02, issuer_count: 100, rating: A, recovery: 0.40}
+  CDX_IG: {pool_capital_ratio: 0.06, delinquent_share: 0.0, issuer_count: 125, rating: BBB, recovery: 0.40}
+model_notes:
+  - Delivery prices and the continuously monitored zero-rebate barrier complete otherwise missing synthetic contract terms.
+  - Pool inputs are synthetic; SEC-SA applies a regulatory formula to those inputs.
+  - Default probabilities and factor loadings are explicit simulation assumptions, not Basel-prescribed values.
+  - Historical positions represent rolling constant-tenor instruments with the same trade identifiers, not a claim that expired contracts remain outstanding.

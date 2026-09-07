@@ -1,0 +1,54 @@
+valuation_date: 2026-06-30
+reporting_currency: INR
+data_classification: synthetic
+rates:
+  INR: {0.25: 0.0620, 0.5: 0.0630, 1.0: 0.0640, 2.0: 0.0650, 3.0: 0.0660, 5.0: 0.0670, 10.0: 0.0690, 15.0: 0.0700, 20.0: 0.0710, 30.0: 0.0720}
+  USD: {0.25: 0.0430, 0.5: 0.0425, 1.0: 0.0420, 2.0: 0.0415, 3.0: 0.0410, 5.0: 0.0405, 10.0: 0.0410, 15.0: 0.0415, 20.0: 0.0420, 30.0: 0.0425}
+  EUR: {0.25: 0.0270, 0.5: 0.0275, 1.0: 0.0280, 2.0: 0.0285, 3.0: 0.0290, 5.0: 0.0295, 10.0: 0.0300, 15.0: 0.0305, 20.0: 0.0310, 30.0: 0.0315}
+inflation:
+  INR: 0.045
+cross_currency_basis:
+  USDINR_BASIS: 0.0020
+fx:
+  USDINR: 86.20
+  EURINR: 93.40
+equity_spot:
+  RELIANCE: 2980.0
+  HDFC_BANK: 1740.0
+  INFOSYS: 1880.0
+  INDIA_SMALLCAP: 420.0
+  APPLE: 215.0
+  NIFTY50: 24750.0
+commodity_spot:
+  BRENT: 84.0
+  WTI: 80.0
+  GOLD: 2380.0
+credit_spreads:
+  AXIS_BANK: 0.011
+  US_INDUSTRIAL: 0.019
+  EU_TECH: 0.013
+  INDIA_METALS: 0.035
+  US_RETAIL: 0.022
+  EU_UTILITY: 0.014
+  RMBS_PRIME_2026: 0.012
+  CDX_IG_S42_3_7: 0.025
+  CDX_IG_S42: 0.009
+volatility:
+  INR_OIS: 0.18
+  USD_OIS: 0.20
+  US_INDUSTRIAL: 0.35
+  EU_UTILITY: 0.22
+  RELIANCE: 0.28
+  NIFTY50: 0.20
+  USDINR: 0.09
+  EURINR: 0.10
+  BRENT: 0.32
+  GOLD: 0.18
+securitisation_price:
+  RMBS_PRIME_2026: 0.97
+  CDX_IG_S42_3_7: 0.82
+  CDX_IG_S42: 0.99
+weather_index_value:
+  INDIA_MONSOON_INDEX: 0.55
+realized_volatility:
+  NIFTY_REALIZED_VOL: 0.18

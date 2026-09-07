@@ -1,0 +1,84 @@
+parameter_set_id: BASEL_FRTB_SA_2026_08_25
+reporting_currency: INR
+specified_currency_rw_reduction_applied: false
+specified_fx_pair_rw_reduction_applied: false
+
+correlation_scenarios:
+  medium:
+    rule: prescribed
+  high:
+    rule: min_1_1.25_times_correlation
+  low:
+    rule: max_2rho_minus_1_0.75_times_rho
+
+delta_risk_weights:
+  GIRR:
+    tenors:
+      0.25: 0.017
+      0.5: 0.017
+      1.0: 0.016
+      2.0: 0.013
+      3.0: 0.012
+      5.0: 0.011
+      10.0: 0.011
+      15.0: 0.011
+      20.0: 0.011
+      30.0: 0.011
+    inflation: 0.016
+    cross_currency_basis: 0.016
+    source: MAR21.42-MAR21.44
+  CSR_NON_SECURITISATION:
+    buckets: {1: 0.005, 2: 0.010, 3: 0.050, 4: 0.030, 5: 0.030, 6: 0.020, 7: 0.015, 8: 0.025, 9: 0.020, 10: 0.040, 11: 0.120, 12: 0.070, 13: 0.085, 14: 0.055, 15: 0.050, 16: 0.120, 17: 0.015, 18: 0.050}
+    source: MAR21.53 Table 4
+  CSR_SECURITISATION_CTP:
+    buckets: {1: 0.040, 2: 0.040, 3: 0.080, 4: 0.050, 5: 0.040, 6: 0.030, 7: 0.020, 8: 0.060, 9: 0.130, 10: 0.130, 11: 0.160, 12: 0.100, 13: 0.120, 14: 0.120, 15: 0.120, 16: 0.130}
+    source: MAR21.59 Table 6
+  CSR_SECURITISATION_NON_CTP:
+    base_buckets_1_to_8: {1: 0.009, 2: 0.015, 3: 0.020, 4: 0.020, 5: 0.008, 6: 0.012, 7: 0.012, 8: 0.014}
+    non_senior_ig_multiplier: 1.25
+    high_yield_multiplier: 1.75
+    other_bucket_25: 0.035
+    source: MAR21.64-MAR21.67 Table 8
+  EQUITY:
+    spot_buckets: {1: 0.55, 2: 0.60, 3: 0.45, 4: 0.55, 5: 0.30, 6: 0.35, 7: 0.40, 8: 0.50, 9: 0.70, 10: 0.50, 11: 0.70, 12: 0.15, 13: 0.25}
+    source: MAR21.77 Table 10
+  COMMODITY:
+    buckets: {1: 0.30, 2: 0.35, 3: 0.60, 4: 0.80, 5: 0.40, 6: 0.45, 7: 0.20, 8: 0.35, 9: 0.25, 10: 0.35, 11: 0.50}
+    source: MAR21.82 Table 11
+  FX:
+    all_pairs: 0.15
+    source: MAR21.87
+
+vega_risk_weights:
+  GIRR: 1.0
+  CSR_NON_SECURITISATION: 1.0
+  CSR_SECURITISATION_NON_CTP: 1.0
+  CSR_SECURITISATION_CTP: 1.0
+  EQUITY_LARGE_AND_INDEX: 0.7778
+  EQUITY_SMALL_AND_OTHER: 1.0
+  COMMODITY: 1.0
+  FX: 1.0
+  source: MAR21.92 Table 13
+
+cross_bucket_correlations:
+  GIRR: 0.50
+  CSR_NON_SECURITISATION: 0.25
+  CSR_SECURITISATION_CTP: 0.25
+  CSR_SECURITISATION_NON_CTP: 0.00
+  EQUITY_DEFAULT: 0.15
+  COMMODITY: 0.20
+  FX: 0.60
+
+special_buckets:
+  CSR_NON_SECURITISATION: [16]
+  CSR_SECURITISATION_CTP: [16]
+  CSR_SECURITISATION_NON_CTP: [25]
+  EQUITY: [11]
+  COMMODITY: [11]
+
+within_bucket_base_correlations:
+  CSR_NON_SECURITISATION: {different_name: 0.35, different_tenor: 0.65, different_curve: 0.999}
+  CSR_SECURITISATION_CTP: {different_name: 0.35, different_tenor: 0.65, different_curve: 0.99}
+  CSR_SECURITISATION_NON_CTP: {different_tranche: 0.40, different_tenor: 0.80, different_curve: 0.999}
+  EQUITY: {1: 0.15, 2: 0.15, 3: 0.15, 4: 0.15, 5: 0.25, 6: 0.25, 7: 0.25, 8: 0.25, 9: 0.075, 10: 0.125, 12: 0.80, 13: 0.80}
+  COMMODITY: {1: 0.55, 2: 0.95, 3: 0.40, 4: 0.80, 5: 0.60, 6: 0.65, 7: 0.55, 8: 0.45, 9: 0.15, 10: 0.40, 11: 0.15}

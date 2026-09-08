@@ -13,6 +13,13 @@ import pandas as pd
 INR_CRORE = 10_000_000.0
 
 
+def display_sample(frame: pd.DataFrame, rows: int) -> None:
+    """Label the displayed population before showing a table excerpt."""
+    from IPython.display import display
+    print(f"Displayed rows: first {min(rows, len(frame)):,} of {len(frame):,} observations, in table order.")
+    display(frame.head(rows))
+
+
 def configure_notebooks() -> None:
     """Use readable tables and charts without scientific notation."""
     pd.set_option("display.max_columns", 30)

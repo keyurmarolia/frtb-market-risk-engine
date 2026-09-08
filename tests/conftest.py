@@ -5,9 +5,12 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 import sqlite3
+import json
+import hashlib
 
 from frtb_engine.database import database_path
 from frtb_engine.ima_pipeline import run_ima
+from frtb_engine.provenance import calculation_fingerprint
 from scripts.build_report import build_report
 
 
@@ -32,9 +35,22 @@ def _integration_artifacts_are_ready() -> bool:
         return False
 
     try:
+        manifest = json.loads((ima_run / "run_manifest.json").read_text())
+        if manifest.get("calculation_fingerprint") != calculation_fingerprint():
+            return False
+        summary = json.loads((ima_run / "27_combined_capital_summary.json").read_text())
+        if summary["sa_run_id"] != sa_run.name:
+            return False
+        for run in (ima_run, sa_run):
+            saved = json.loads((run / "run_manifest.json").read_text())
+            for artifact in saved["artifacts"]:
+                path = ROOT / artifact["path"]
+                if hashlib.sha256(path.read_bytes()).hexdigest() != artifact["sha256"]:
+                    return False
         with sqlite3.connect(database) as connection:
-            return connection.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
-    except sqlite3.DatabaseError:
+            runs = {row[0] for row in connection.execute("SELECT run_id FROM engine_runs WHERE status='completed'")}
+            return {ima_run.name, sa_run.name}.issubset(runs) and connection.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+    except (sqlite3.DatabaseError, OSError, KeyError, ValueError):
         return False
 
 

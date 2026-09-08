@@ -39,7 +39,7 @@ def test_manifest_covers_sa_and_ima_chapters() -> None:
 def test_shared_database_schema_and_seed_records(tmp_path: Path) -> None:
     database = initialise_database(tmp_path / "frtb_test.sqlite3")
     summary = schema_summary(database)
-    assert summary["schema_version"] == "2"
+    assert summary["schema_version"] == "3"
     assert set(summary["tables"]) == EXPECTED_TABLES
 
     with sqlite3.connect(database) as connection:

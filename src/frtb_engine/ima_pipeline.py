@@ -37,13 +37,14 @@ from frtb_engine.rrao import calculate_rrao
 from frtb_engine.sbm import calculate_sbm
 from frtb_engine.sensitivities import calculate_curvature, calculate_delta, calculate_vega, load_trades
 from frtb_engine.validation import validate_foundation
+from frtb_engine.provenance import calculation_fingerprint
 
 
 def run_ima(run_id: str | None = None) -> Dict[str, Any]:
     """Run IMA, desk eligibility, SA fallback and final Market RWA."""
     validate_foundation()
     load_synthetic_book()
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     resolved_run_id = run_id or f"IMA_{timestamp}"
     output_dir = PROJECT_ROOT / "outputs" / resolved_run_id
     if output_dir.exists():
@@ -85,6 +86,7 @@ def run_ima(run_id: str | None = None) -> Dict[str, Any]:
         eligibility["eligibility_reason"] = "Bank-level minimum IMA coverage share was not met"
         eligible_desks = set()
         fallback_desks = set(trades["desk"].unique())
+        eligible_sa_share = 0.0
 
     eligible_factor_pnl = factor_pnl[factor_pnl["desk"].isin(eligible_desks)].copy()
     eligible_factors = set(eligible_factor_pnl["risk_factor_id"])
@@ -100,8 +102,8 @@ def run_ima(run_id: str | None = None) -> Dict[str, Any]:
     capital_history = _capital_history(
         eligible_factor_pnl, eligible_inventory, eligible_rfet, es, float(nmrf["ses_inr"])
     )
-    average_imcc = float(capital_history.tail(60)["imcc_inr"].mean())
-    average_ses = float(capital_history.tail(60)["ses_inr"].mean())
+    average_imcc = float(capital_history.tail(60)["imcc_inr"].mean()) if eligible_desks else 0.0
+    average_ses = float(capital_history.tail(60)["ses_inr"].mean()) if eligible_desks else 0.0
     current_non_drc = float(es["imcc_inr"] + nmrf["ses_inr"])
     average_non_drc = float(multiplier * average_imcc + average_ses)
     non_drc_capital = max(current_non_drc, average_non_drc)
@@ -113,7 +115,9 @@ def run_ima(run_id: str | None = None) -> Dict[str, Any]:
     sa_amber = float(desk_sa.loc[desk_sa["desk"].isin(amber_desks), "sa_capital_inr"].sum())
     eligible_ima_before_surcharge = non_drc_capital + float(ima_drc["ima_drc_capital_inr"])
     amber_share, amber_surcharge = calculate_amber_surcharge(
-        sa_amber, float(sa_eligible["sa_capital_inr"]), eligible_ima_before_surcharge
+        sa_amber,
+        float(desk_sa.loc[desk_sa["desk"].isin(eligible_desks), "sa_capital_inr"].sum()),
+        float(sa_eligible["sa_capital_inr"]), eligible_ima_before_surcharge
     )
     total_capital = eligible_ima_before_surcharge + amber_surcharge + float(sa_fallback["sa_capital_inr"])
     market_rwa = total_capital * float(load_ima_parameters()["capital"]["market_rwa_multiplier"])
@@ -169,14 +173,15 @@ def run_ima(run_id: str | None = None) -> Dict[str, Any]:
         "ima_drc_capital_inr": float(ima_drc["ima_drc_capital_inr"]),
         "ima_eligible_capital_before_surcharge_inr": eligible_ima_before_surcharge,
         "pla_amber_surcharge_inr": amber_surcharge,
+        "pla_amber_coefficient": amber_share,
         "sa_fallback_capital_inr": float(sa_fallback["sa_capital_inr"]),
         "final_frtb_market_risk_capital_inr": total_capital,
         "market_rwa_inr": market_rwa,
         "rwa_multiplier": 12.5,
         "standalone_market_risk_floor_applied": False,
         "aggregation_note": "MAR33 aggregation is applied; full-book SA is retained for comparison and wider Basel output-floor use",
-        "stress_window_start": str(pd.Timestamp(es["stress_start"]).date()),
-        "stress_window_end": str(pd.Timestamp(es["stress_end"]).date()),
+        "stress_window_start": str(pd.Timestamp(es["stress_start"]).date()) if eligible_desks else None,
+        "stress_window_end": str(pd.Timestamp(es["stress_end"]).date()) if eligible_desks else None,
     }
 
     artifacts: dict[str, pd.DataFrame] = {
@@ -217,6 +222,7 @@ def run_ima(run_id: str | None = None) -> Dict[str, Any]:
     manifest_rows.append(_manifest_row("combined_capital_summary", summary_path, 1))
     manifest = {
         "run_id": resolved_run_id,
+        "calculation_fingerprint": calculation_fingerprint(),
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "data_note": "Synthetic inputs and Basel regulatory parameters are separately labelled in every retained stage",
         "artifacts": manifest_rows,
@@ -255,13 +261,14 @@ def calculate_sa_charge(trades: pd.DataFrame, market: Dict[str, Any]) -> Dict[st
 def calculate_amber_surcharge(
     standalone_amber_sa: float,
     standalone_green_and_amber_sa: float,
+    aggregate_green_and_amber_sa: float,
     eligible_ima_capital: float,
 ) -> tuple[float, float]:
     """Return the MAR33.45 coefficient and positive amber-desk surcharge."""
     if standalone_green_and_amber_sa <= 0:
         return 0.0, 0.0
     coefficient = 0.5 * standalone_amber_sa / standalone_green_and_amber_sa
-    surcharge = coefficient * max(standalone_green_and_amber_sa - eligible_ima_capital, 0.0)
+    surcharge = coefficient * max(aggregate_green_and_amber_sa - eligible_ima_capital, 0.0)
     return float(coefficient), float(surcharge)
 
 
@@ -292,6 +299,8 @@ def _capital_history(
     ses: float,
 ) -> pd.DataFrame:
     """Recalculate 60 dated ES measures; hold the calibrated stress set fixed."""
+    if factor_pnl.empty:
+        return pd.DataFrame(columns=["date", "imcc_inr", "ses_inr", "history_basis"])
     params = load_ima_parameters()["expected_shortfall"]
     confidence = float(params["confidence_level"])
     dates = pd.DatetimeIndex(sorted(pd.to_datetime(factor_pnl["date"].unique())))
@@ -363,9 +372,9 @@ def _save_canonical_inputs(
     target = PROJECT_ROOT / "data" / "synthetic" / "ima"
     target.mkdir(parents=True, exist_ok=True)
     inventory.to_csv(target / "risk_factor_inventory.csv", index=False)
-    history.to_csv(target / "risk_factor_history.csv.gz", index=False, compression="gzip")
+    history.to_csv(target / "risk_factor_history.csv.gz", index=False, compression={"method": "gzip", "mtime": 0})
     observations.to_csv(target / "rfet_observations.csv", index=False)
-    portfolio_history.to_csv(target / "daily_portfolio_snapshots.csv.gz", index=False, compression="gzip")
+    portfolio_history.to_csv(target / "daily_portfolio_snapshots.csv.gz", index=False, compression={"method": "gzip", "mtime": 0})
     manifest = {
         "data_classification": "synthetic",
         "construction": "correlated economic factors, volatility clustering, named stress regimes and fixed random seeds",

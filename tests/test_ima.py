@@ -106,10 +106,10 @@ def test_combined_capital_uses_ima_plus_amber_surcharge_plus_sa_fallback() -> No
 
 
 def test_amber_surcharge_uses_one_half_weight_and_positive_difference() -> None:
-    coefficient, surcharge = calculate_amber_surcharge(30.0, 100.0, 80.0)
+    coefficient, surcharge = calculate_amber_surcharge(30.0, 100.0, 80.0, 60.0)
     assert coefficient == 0.15
     assert surcharge == 3.0
-    assert calculate_amber_surcharge(30.0, 100.0, 120.0)[1] == 0.0
+    assert calculate_amber_surcharge(30.0, 100.0, 80.0, 120.0)[1] == 0.0
 
 
 def test_ima_tables_are_retained_in_shared_database() -> None:

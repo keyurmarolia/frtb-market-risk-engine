@@ -1,11 +1,5 @@
 # FRTB Market Risk Engine
 
-## Version and scope
-
-This is an educational project snapshot. Saved results describe the current local version; they have not been independently revalidated for this release. Methodology and validation updates will be documented in future revisions.
-
-The model is under review. Saved notebook results may predate changes to the calculation code and should be treated as illustrative until a reconciled rerun is completed.
-
 This Python project calculates Basel Fundamental Review of the Trading Book market-risk capital under both the Standardised Approach and the Internal Models Approach using one shared synthetic trading book.
 
 ## Complete calculation boundary
@@ -45,9 +39,11 @@ INR is the reporting currency. Foreign positions retain their native currency an
 
 The 47 pre-executed notebooks form one continuous calculation.
 
+The sequence begins with the [SA calculation map](notebooks/00_project_scope_and_architecture.ipynb), continues through the [IMA calculation map](notebooks/30_ima_complete_calculation_map.ipynb), and ends with [combined capital and Market RWA](notebooks/45_combined_sa_ima_capital_and_market_rwa.ipynb). The [notebook curriculum](docs/notebook_curriculum.md) lists every stage.
+
 - `00`–`05`: trading book, market data, pricing and factor mapping
-- `06`–`17`: delta, vega and curvature by risk class and derivatives portfolio
-- `18`–`22`: exact-factor netting, weights, correlations and seven-class SBM
+- `06`–`17`: delta, exact-factor netting, vega and curvature by risk class and derivatives portfolio
+- `18`–`22`: weights, correlations and seven-class SBM
 - `23`–`29`: SA DRC, RRAO, SA capital and trade walkthrough
 - `30`–`38`: IMA map, RFET, liquidity horizons, historical P&L, ES, IMCC and NMRF SES
 - `39`–`44`: IMA DRC, daily portfolios, HPL/RTPL, PLA, VaR backtesting, eligibility and IMA aggregation
@@ -87,6 +83,8 @@ python3 scripts/bootstrap_environment.py
 ## Interpretation boundary
 
 The engine is a Basel-aligned educational implementation using synthetic data and transparent pricing approximations. It is not a bank-approved internal model, an RBI filing or evidence of supervisory model approval.
+
+The 60-day capital comparison is reconstructed using the current portfolio and stress calibration across dated observation windows. It illustrates the averaging formula; it is not a record of capital calculated on each day's historical holdings.
 
 ## Related projects
 

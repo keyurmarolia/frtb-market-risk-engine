@@ -50,6 +50,10 @@ Backtesting forecasts 97.5% and 99% one-day VaR from the preceding 250 observati
 
 Eligible green and amber desks enter IMA. Red and non-nominated desks enter one aggregate SA fallback calculation. The non-DRC IMA component is the greater of current IMCC plus SES and multiplier-adjusted 60-day average IMCC plus average SES. IMA DRC is added. The amber coefficient is one half of standalone amber-desk SA divided by standalone green-and-amber SA, and it multiplies the positive difference between eligible-desk SA and eligible-desk IMA.
 
+The coefficient uses the sum of separate eligible-desk SA charges. The positive difference uses SA calculated on the combined eligible portfolio, including diversification. If every desk is ineligible, all IMA components are zero and the final charge equals full-book SA.
+
+The 60-day averaging illustration holds current positions and current stress calibration fixed while moving the observation window. It is a reconstructed current-position comparison, not historical daily capital on the changing portfolio snapshots used for P&L attribution.
+
 ```text
 Final capital = eligible-desk IMA capital + amber surcharge + SA fallback capital
 Market RWA = 12.5 x final capital

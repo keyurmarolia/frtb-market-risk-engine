@@ -27,6 +27,8 @@
 
 ## Calculation outputs
 
+The SQLite trade table stores `maturity_years` and `option_expiry_years` as numeric remaining year counts, matching the source trading book.
+
 | Field | Meaning |
 |---|---|
 | `raw_sensitivity` | Repricing sensitivity before regulatory risk weight |

@@ -125,7 +125,7 @@ TOPICS = [
           r"$$Treatment_d=f(PLA_d,Backtesting_d,Model\ scope_d)$$"),
     Topic("ima_capital_aggregation", "Aggregate IMA capital for eligible desks",
           "Apply current-versus-average rules, the backtesting multiplier, IMA DRC and the amber surcharge.",
-          "The non-DRC component compares current IMCC plus SES with multiplier-adjusted 60-day average IMCC plus average SES. IMA DRC compares current with its 12-week average.",
+          "The non-DRC component compares current IMCC plus SES with multiplier-adjusted 60-day average IMCC plus average SES. This notebook reconstructs the 60-day comparison at current positions and stress calibration; it is not capital measured on each day's historical holdings. IMA DRC compares current with its 12-week average.",
           "IMCC and SES histories, bank-wide exceptions, IMA DRC and amber-desk SA comparison.",
           "Eligible-desk IMA capital with every component shown separately.",
           "Basel norm applied: MAR33.22 and MAR33.41–MAR33.45 prescribe the averaging, multiplier and amber-surcharge treatment.",
@@ -136,7 +136,7 @@ TOPICS = [
           "IMA eligible capital, amber surcharge, SA fallback capital and full-book SA benchmark.",
           "Final FRTB market-risk capital and Market RWA in INR.",
           "Basel norm applied: MAR33.43 aggregates eligible IMA desks with SA fallback; MAR33.46 multiplies capital by 12.5.",
-          r"$$K_{Market}=IMA_{G,A}+C_U,\qquad RWA_{Market}=12.5K_{Market}$$"),
+          r"$$K_{Market}=IMA_{G,A}+PLA\ surcharge+C_U,\qquad RWA_{Market}=12.5K_{Market}$$"),
     Topic("reporting_and_calculation_traceability", "Trace the combined FRTB calculation from capital to trades",
           "Make every reported amount traceable through desks, model stages, factors and positions.",
           "The reporting layer does not create capital. It presents retained calculation outputs from the same run in a compact form.",
@@ -362,7 +362,7 @@ print(f"Current IMCC + SES = {money(current)}")
 print(f"Multiplier-adjusted average IMCC + average SES = {money(average)}")
 print(f"Selected non-DRC capital = {money(SUMMARY['ima_non_drc_capital_inr'])}")
 display(bank)""",
-            """fig,axes=plt.subplots(2,1,sharex=True,figsize=(11,6)); axes[0].plot(history.date,history.imcc_inr/INR_CRORE,color='#2563EB'); axes[0].set_ylabel('INR crore'); axes[0].set_title('IMCC history used for the 60-day average',loc='left',weight='bold'); axes[1].plot(history.date,history.ses_inr/INR_CRORE,color='#DC2626'); axes[1].set_ylabel('INR crore'); axes[1].set_title('SES history used for the 60-day average',loc='left',weight='bold'); plt.tight_layout(); plt.show()
+            """fig,axes=plt.subplots(2,1,sharex=True,figsize=(11,6)); axes[0].plot(history.date,history.imcc_inr/INR_CRORE,color='#2563EB'); axes[0].set_ylabel('INR crore'); axes[0].set_title('Reconstructed IMCC: current positions and stress calibration',loc='left',weight='bold'); axes[1].plot(history.date,history.ses_inr/INR_CRORE,color='#DC2626'); axes[1].set_ylabel('INR crore'); axes[1].set_title('Reconstructed SES: current positions and stress calibration',loc='left',weight='bold'); plt.tight_layout(); plt.show()
 parts=pd.Series({'Current IMCC + SES':current,'Multiplier-adjusted average':average,'IMA DRC capital':SUMMARY['ima_drc_capital_inr'],'PLA amber surcharge':SUMMARY['pla_amber_surcharge_inr']})/INR_CRORE; ax=parts.plot(kind='bar',color=['#2563EB','#F59E0B','#7C3AED','#DC2626']); ax.set_ylabel('INR crore'); ax.set_title('Eligible-desk IMA capital components',loc='left',weight='bold'); ax.tick_params(axis='x',rotation=20); plt.tight_layout(); plt.show()""",
         ]
     if number == 45:

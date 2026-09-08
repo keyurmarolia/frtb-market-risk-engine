@@ -40,7 +40,7 @@ import yaml
 from IPython.display import display
 from frtb_engine.notebook_tools import (
     INR_CRORE, bar_crore, bar_inr, configure_notebooks, crore_table,
-    draw_capital_map, draw_flow, heatmap, percent_columns,
+    draw_capital_map, draw_flow, heatmap, percent_columns, display_sample,
 )
 
 configure_notebooks()
@@ -255,7 +255,7 @@ for group,values in market.items():
                 for tenor,amount in value.items(): rows.append([group,key,tenor,amount])
             else: rows.append([group,key,'',value])
 inputs=pd.DataFrame(rows,columns=['market_group','risk_factor','tenor','value'])
-display(inputs.head(40))
+display_sample(inputs,40)
 rates=inputs[inputs.market_group=='rates'].copy()
 rates['tenor_number']=pd.to_numeric(rates.tenor)"""
     if number in (3, 4):
@@ -273,11 +273,11 @@ mapping['tenor_display']=mapping.apply(
     lambda row:f"{row.tenor:g} years" if pd.notna(row.tenor)
     else 'Not applicable for this risk factor',axis=1)
 columns=['trade_id','desk','instrument_type','currency','risk_class','bucket','risk_factor_id','tenor_display','market_group']
-display(mapping[columns].head(35))
+display_sample(mapping[columns],35)
 print('One foreign corporate bond becomes these separate rows:')
 display(mapping[mapping.trade_id=='C02'][columns])
 counts=mapping.groupby(['trade_id','instrument_type']).size().rename('number_of_risk_factors').reset_index()
-display(counts.sort_values('number_of_risk_factors',ascending=False).head(12))"""
+display_sample(counts.sort_values('number_of_risk_factors',ascending=False),12)"""
     if number == 6:
         return """from frtb_engine.parameters import risk_weight
 delta=pd.read_csv(RUN/'03_delta_trade_level.csv')
@@ -295,7 +295,7 @@ view['factor_label']=view.apply(
 columns=['trade_id','instrument_type','currency','bucket','risk_factor_id','factor_type','tenor_display',
          'applicable_risk_weight','base_value_inr','shocked_value_inr','value_change_for_bump_inr','raw_sensitivity']
 shown=crore_table(view[columns],['base_value_inr','shocked_value_inr','value_change_for_bump_inr','raw_sensitivity'])
-display(percent_columns(shown,['applicable_risk_weight']).head(30))
+display_sample(percent_columns(shown,['applicable_risk_weight']),30)
 print('The risk weight is shown for reference. Formal weighting happens after exact-factor netting in Notebook 18.')
 example=view.iloc[0]
 print()
@@ -319,7 +319,7 @@ view['tenor_display']=view.apply(
 columns=['trade_id','instrument_type','currency','risk_class','bucket','risk_factor_id','tenor_display',
          'bump_unit','applicable_risk_weight','base_value_inr','shocked_value_inr','value_change_for_bump_inr','raw_sensitivity']
 shown=crore_table(view[columns],['base_value_inr','shocked_value_inr','value_change_for_bump_inr','raw_sensitivity'])
-display(percent_columns(shown,['applicable_risk_weight']).head(25))
+display_sample(percent_columns(shown,['applicable_risk_weight']),25)
 print('The risk weight is shown for reference. Formal weighting happens after exact-factor netting in Notebook 18.')
 example=view.iloc[0]
 print(f"Worked trade: {{example.trade_id}} | factor: {{example.risk_factor_id}}")
@@ -402,7 +402,7 @@ weighted=pd.concat([pd.read_csv(RUN/'06_delta_netted_weighted.csv'),pd.read_csv(
 weighted['calculated_weighted']=weighted.raw_sensitivity*weighted.risk_weight
 columns=['risk_measure','risk_class','bucket','risk_factor_id','raw_sensitivity','risk_weight','weighted_sensitivity']
 shown=crore_table(weighted[columns],['raw_sensitivity','weighted_sensitivity'])
-display(percent_columns(shown,['risk_weight']).head(30))
+display_sample(percent_columns(shown,['risk_weight']),30)
 example=weighted.iloc[0]
 print(f"Worked factor {example.risk_factor_id}: {example.raw_sensitivity:,.2f} x {example.risk_weight*100:,.2f}% = {example.weighted_sensitivity:,.2f}")"""
     if number == 19:
@@ -440,7 +440,7 @@ for i,left in enumerate(records):
         variance+=2*gamma*left['s_bucket']*right['s_bucket']
         pairs.append({'bucket 1':left['bucket'],'bucket 2':right['bucket'],'gamma':gamma})
 display(crore_table(sample[['bucket','k_bucket','s_bucket']],['k_bucket','s_bucket']))
-display(percent_columns(pd.DataFrame(pairs).head(12),['gamma']))
+display_sample(percent_columns(pd.DataFrame(pairs),['gamma']),12)
 print(f"GIRR delta capital: INR {np.sqrt(max(variance,0))/INR_CRORE:,.4f} crore")"""
     if number == 21:
         return """scenarios=pd.read_csv(RUN/'10_sbm_scenarios.csv')
@@ -479,7 +479,7 @@ effects['bump_effect_inr']=effects.shocked_value_inr-effects.base_value_inr
 desk=effects.groupby(['desk','measure']).agg(signed_effect=('bump_effect_inr','sum'),gross_effect=('bump_effect_inr',lambda x:x.abs().sum())).reset_index()
 display(crore_table(desk,['signed_effect','gross_effect']))
 portfolio=effects.groupby(['desk','sub_portfolio','risk_class'])['bump_effect_inr'].apply(lambda x:x.abs().sum()).reset_index()
-display(crore_table(portfolio,['bump_effect_inr']).head(30))"""
+display_sample(crore_table(portfolio,['bump_effect_inr']),30)"""
     if number == 28:
         return """summary=json.loads((RUN/'16_capital_summary.json').read_text()); drc=pd.read_csv(RUN/'14_drc_summary.csv')
 components=pd.DataFrame([

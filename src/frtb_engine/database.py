@@ -8,7 +8,7 @@ from typing import Dict, List
 from frtb_engine.config import PROJECT_ROOT, load_project_config
 
 
-SCHEMA_VERSION = "2"
+SCHEMA_VERSION = "3"
 
 EXPECTED_TABLES = {
     "schema_metadata",
@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS trades (
     long_short TEXT NOT NULL CHECK (long_short IN ('long', 'short')),
     underlying TEXT,
     issuer TEXT,
-    maturity_date TEXT,
-    option_expiry TEXT,
+    maturity_years REAL,
+    option_expiry_years REAL,
     is_synthetic INTEGER NOT NULL CHECK (is_synthetic IN (0, 1)),
     source_label TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -142,6 +142,12 @@ def initialise_database(path: Path | None = None) -> Path:
 
     with sqlite3.connect(target) as connection:
         connection.executescript(DDL)
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(trades)")}
+        for old, new in (("maturity_date", "maturity_years"), ("option_expiry", "option_expiry_years")):
+            if old in columns:
+                connection.execute(f"ALTER TABLE trades ADD COLUMN {new} REAL")
+                connection.execute(f"UPDATE trades SET {new} = CAST({old} AS REAL)")
+                connection.execute(f"ALTER TABLE trades DROP COLUMN {old}")
         connection.execute(
             "INSERT OR REPLACE INTO schema_metadata(key, value) VALUES (?, ?)",
             ("schema_version", SCHEMA_VERSION),
@@ -240,7 +246,7 @@ def load_synthetic_book(path: Path | None = None) -> Dict[str, int]:
                     trade_id, portfolio_id, desk, sub_portfolio, instrument_type,
                     product_form, trade_currency, reporting_currency, quantity,
                     notional, market_value, long_short, underlying, issuer,
-                    maturity_date, option_expiry, is_synthetic, source_label
+                    maturity_years, option_expiry_years, is_synthetic, source_label
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -249,7 +255,7 @@ def load_synthetic_book(path: Path | None = None) -> Dict[str, int]:
                     record["product_form"], record["currency"], "INR",
                     float(record["quantity"]), float(record["notional"]), None,
                     record["long_short"], record["underlying"], record["issuer"],
-                    str(record["maturity_years"]), str(record["option_expiry_years"]),
+                    float(record["maturity_years"]), float(record["option_expiry_years"]),
                     1, "data/synthetic/trades.csv",
                 ),
             )

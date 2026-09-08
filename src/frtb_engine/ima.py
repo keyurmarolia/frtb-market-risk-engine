@@ -417,6 +417,25 @@ def calculate_es_and_imcc(
     rfet: pd.DataFrame,
 ) -> Dict[str, Any]:
     params = load_ima_parameters()["expected_shortfall"]
+    if factor_pnl.empty:
+        scaled = pd.DataFrame([
+            {"scope": scope, "full_current_es_inr": 0.0, "reduced_current_es_inr": 0.0,
+             "reduced_stress_es_inr": 0.0, "reduced_set_coverage": 1.0,
+             "stress_scaling_ratio": 1.0, "scaled_es_capital_inr": 0.0,
+             "coverage_requirement": params["reduced_set_minimum_coverage"], "coverage_pass": True}
+            for scope in ["ALL", *params["broad_risk_classes"]]
+        ])
+        return {
+            "reduced_selection": pd.DataFrame(columns=["risk_factor_id", "included_in_reduced_set"]),
+            "es_summary": pd.DataFrame(columns=["scope", "period", "factor_set", "factor_count",
+                "es_10_day_inr", "liquidity_horizon_adjusted_es_inr", "period_start", "period_end"]),
+            "lh_components": pd.DataFrame(columns=["scope", "period", "factor_set", "liquidity_horizon_days",
+                "subset_es_inr", "scaling_increment", "squared_contribution"]),
+            "scaled_es": scaled,
+            "stress_scan": pd.DataFrame(columns=["window_start", "window_end", "reduced_es_inr"]),
+            "stress_start": pd.NaT, "stress_end": pd.NaT,
+            "unconstrained_imcc_inr": 0.0, "constrained_imcc_inr": 0.0, "imcc_inr": 0.0,
+        }
     confidence = float(params["confidence_level"])
     mrf = set(rfet.loc[rfet["modellability_status"] == "MRF", "risk_factor_id"])
     current = factor_pnl[factor_pnl.date >= pd.Timestamp(factor_pnl.date.max()) - pd.offsets.BDay(int(params["current_window_business_days"]) - 1)]
@@ -598,6 +617,14 @@ def calculate_ima_drc(
     market: Dict[str, Any],
     portfolio_history: pd.DataFrame | None = None,
 ) -> Dict[str, Any]:
+    if trades.empty:
+        return {
+            "current_drc_inr": 0.0, "average_12_week_drc_inr": 0.0, "ima_drc_capital_inr": 0.0,
+            "issuer_inputs": pd.DataFrame(columns=["obligor", "pd", "exposure_jtd_inr"]),
+            "loss_distribution": pd.DataFrame(columns=["simulation", "loss_inr"]),
+            "tail_trace": pd.DataFrame(columns=["simulation", "loss_inr"]),
+            "weekly_history": pd.DataFrame(columns=["date", "ima_drc_inr"]),
+        }
     params = load_ima_parameters()["ima_drc"]
     assumptions = load_synthetic_assumptions()["default_model"]
     rating_pd = assumptions["rating_pd"]

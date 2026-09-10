@@ -2,6 +2,29 @@
 
 This Python project calculates Basel Fundamental Review of the Trading Book market-risk capital under both the Standardised Approach and the Internal Models Approach using one shared synthetic trading book.
 
+## Saved results
+
+The saved synthetic run combines eligible IMA desks with an SA fallback desk. All amounts below are INR crore, rounded from the reproduced calculation and notebooks 28 and 45, with valuation date 30 June 2026.
+
+| Capital component | Saved result |
+|---|---:|
+| Full-book SA capital (comparison) | 109.50 |
+| Eligible IMA before amber surcharge | 88.72 |
+| Amber surcharge | 0.00 |
+| SA fallback | 0.08 |
+| Combined market-risk capital | 88.80 |
+| Market RWA | 1,109.96 |
+
+Market RWA is calculated as 12.5 times unrounded combined capital. Five desks are IMA green; the Residual Risk desk uses SA fallback. These synthetic outcomes do not demonstrate supervisory eligibility for a real trading desk.
+
+![Saved final market-risk capital by desk](docs/assets/results-preview.png)
+
+## Explore the analysis
+
+[Start: shared trading book and SA map](notebooks/00_project_scope_and_architecture.ipynb) · [IMA calculation map](notebooks/30_ima_complete_calculation_map.ipynb) · [Final capital and Market RWA](notebooks/45_combined_sa_ima_capital_and_market_rwa.ipynb)
+
+Read the saved notebooks and preview without installing Python. The detailed Excel reporting workbook is generated locally by the commands below; it is not included in the Git source tree. The full-book SA comparison and desk-level standalone SA amounts are distinct from the aggregate fallback amount.
+
 ## Complete calculation boundary
 
 ```text
@@ -53,18 +76,29 @@ Each notebook states the calculation, purpose, inputs, formula, numerical exampl
 
 ## Reproducible execution
 
+Python 3.11 or later is required; automated checks use Python 3.12. From the cloned repository:
+
 ```bash
-python3 scripts/bootstrap_environment.py
-.frtb_sa_env/bin/python -m frtb_engine validate-foundation
-.frtb_sa_env/bin/python -m frtb_engine run-ima
-.frtb_sa_env/bin/python scripts/build_notebooks.py
-.frtb_sa_env/bin/python scripts/build_ima_notebooks.py
-.frtb_sa_env/bin/python scripts/validate_notebooks.py
-.frtb_sa_env/bin/python scripts/build_report.py
-.frtb_sa_env/bin/python -m pytest -q
+python scripts/bootstrap_environment.py
 ```
 
-`Run FRTB Market Risk Engine.command` runs the complete integrated calculation and opens the retained outputs.
+Activate the created environment, then use the same commands on each platform:
+
+```bash
+# macOS / Linux
+source .frtb_sa_env/bin/activate
+# Windows Command Prompt: .frtb_sa_env\Scripts\activate
+# Windows PowerShell: .frtb_sa_env\Scripts\Activate.ps1
+python -m frtb_engine validate-foundation
+python -m frtb_engine run-ima
+python scripts/build_notebooks.py
+python scripts/build_ima_notebooks.py
+python scripts/validate_notebooks.py
+python scripts/build_report.py
+python -m pytest -q
+```
+
+The macOS launcher `Run FRTB Market Risk Engine.command` runs the integrated calculation and opens retained outputs. Tests create missing integration outputs on a fresh checkout. The automated workflow runs the foundation checks, integrated calculation tests and saved-notebook checks.
 
 ## Project structure
 
@@ -88,4 +122,4 @@ The 60-day capital comparison is reconstructed using the current portfolio and s
 
 ## Related projects
 
-[Credit scorecard](https://github.com/keyurmarolia/credit-scorecard-pd-model) · [IFRS 9 ECL](https://github.com/keyurmarolia/ifrs9-mortgage-ecl) · [Basel capital](https://github.com/keyurmarolia/basel-credit-capital-engine) · [FRTB](https://github.com/keyurmarolia/frtb-market-risk-engine) · [Momentum](https://github.com/keyurmarolia/momentum-strategy-research) · [IndiGo research](https://github.com/keyurmarolia/indigo-equity-research)
+[IFRS 9 ECL](https://github.com/keyurmarolia/ifrs9-mortgage-ecl) · [Basel credit capital](https://github.com/keyurmarolia/basel-credit-capital-engine) · [Momentum research](https://github.com/keyurmarolia/momentum-in-indian-equities-research) · [InterGlobe valuation](https://github.com/keyurmarolia/interglobe-aviation-equity-research-model)
